@@ -89,13 +89,14 @@ public class FileHashGUI {
 
     private static String calculateHash(File file, String algorithm) throws Exception {
         MessageDigest md = MessageDigest.getInstance(algorithm);
-        FileInputStream fis = new FileInputStream(file);
-        byte[] dataBytes = new byte[1024];
-        int nread;
-        while ((nread = fis.read(dataBytes)) != -1) {
-            md.update(dataBytes, 0, nread);
+        try (FileInputStream fis = new FileInputStream(file)) {
+            byte[] dataBytes = new byte[1024];
+            int nread;
+            while ((nread = fis.read(dataBytes)) != -1) {
+                md.update(dataBytes, 0, nread);
+            }
+            byte[] mdBytes = md.digest();
+            return DatatypeConverter.printHexBinary(mdBytes).toLowerCase();
         }
-        byte[] mdbytes = md.digest();
-        return DatatypeConverter.printHexBinary(mdbytes).toLowerCase();
     }
 }
